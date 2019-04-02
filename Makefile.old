@@ -1,0 +1,6 @@
+gbamake: main.c main.o main.elf main.gba
+	arm-none-eabi-gcc -c main.c -mthumb-interwork -mthumb -O2 -o main.o -ggdb
+	arm-none-eabi-gcc main.o -mthumb-interwork -mthumb -specs=gba.specs -o main.elf -ggdb
+	arm-none-eabi-objcopy -v -O binary main.elf main.gba
+	gbafix main.gba
+
