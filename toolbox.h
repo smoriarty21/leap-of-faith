@@ -1,13 +1,15 @@
-// toolbox.h: 
 #ifndef TOOLBOX_H
 #define TOOLBOX_H
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+typedef unsigned int uint32;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
 typedef unsigned int uint32;
 
-typedef u16 COLOR;
+typedef uint16 COLOR;
+typedef uint32 tile_4bpp[8];
+typedef tile_4bpp tile_block[512];
+typedef uint16 rgb15;
 
 #define MEM_IO   0x04000000
 #define MEM_PAL  0x05000000
@@ -19,10 +21,7 @@ typedef u16 COLOR;
 #define OBJECT_ATTR0_Y_MASK 0x0FF
 #define OBJECT_ATTR1_X_MASK 0x1FF
 
-#define MEM_IO      0x04000000
-#define MEM_VRAM    0x06000000
-
-#define REG_DISPCNT *((volatile u32*)(MEM_IO+0x0000))
+#define REG_DISPCNT *((volatile uint32*)(MEM_IO + 0x0000))
 #define REG_KEY_INPUT *((volatile uint32*)(MEM_IO + 0x0130))
 
 #define KEY_A        0x0001
@@ -38,7 +37,7 @@ typedef u16 COLOR;
 
 #define KEY_MASK     0xFC00
 
-#define REG_VCOUNT *((volatile u32*)(MEM_IO+0x0006))
+#define REG_VCOUNT *((volatile uint32*)(MEM_IO+0x0006))
 
 #define DCNT_MODE0 0x0000
 #define DCNT_MODE1 0x0001
@@ -56,10 +55,11 @@ typedef u16 COLOR;
 #define SCREEN_WIDTH  240
 #define SCREEN_HEIGHT 160
 
-#define vid_mem     ((u16*)MEM_VRAM)
+#define vid_mem ((uint16*)MEM_VRAM)
 
-INLINE void m3_plot(int x, int y, COLOR clr)
-{   vid_mem[y*SCREEN_WIDTH+x]= clr;    }
+INLINE void m3_plot(int x, int y, COLOR clr) {
+    vid_mem[y*SCREEN_WIDTH+x]= clr;
+}
 
 #define CLR_BLACK   0x0000
 #define CLR_RED     0x001F
@@ -70,7 +70,8 @@ INLINE void m3_plot(int x, int y, COLOR clr)
 #define CLR_CYAN    0x7FE0
 #define CLR_WHITE   0x7FFF
 
-// INLINE COLOR RGB15(u32 red, u32 green, u32 blue)
-// {   return red | (green<<5) | (blue<<10);   }
+#define oam_mem ((volatile ObjectAttributes *)MEM_OAM)
+#define tile_mem ((volatile tile_block *)MEM_VRAM)
+#define object_palette_mem ((volatile rgb15 *)(MEM_PAL + 0x200))
 
-#endif // TOOLBOX_H
+#endif
